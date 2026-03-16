@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/product_data.dart';
+import '../models/product.dart';
+import 'cart_screen.dart';
 import 'detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,8 +12,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int cartCount = 0;
+  final List<Product> cartItems = [];
   String searchText = '';
+
+  void addToCart(Product product) {
+    setState(() {
+      cartItems.add(product);
+    });
+  }
+
+  void removeFromCart(Product product) {
+    setState(() {
+      cartItems.remove(product);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +38,62 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Mini Katalog'),
         centerTitle: true,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: Text(
-                'Sepet: $cartCount',
-                style: const TextStyle(fontSize: 16),
-              ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CartScreen(
+                    cartItems: cartItems,
+                    onRemoveFromCart: removeFromCart,
+                  ),
+                ),
+              ).then((_) {
+                setState(() {});
+              });
+            },
+            icon: Badge(
+              label: Text(cartItems.length.toString()),
+              isLabelVisible: cartItems.isNotEmpty,
+              child: const Icon(Icons.shopping_cart_outlined),
             ),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF7E57C2), Color(0xFF9575CD)],
+                ),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hoş Geldiniz',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    'En yeni ürünleri keşfet ve detayları incele.',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
             TextField(
               onChanged: (value) {
                 setState(() {
@@ -48,12 +103,18 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: InputDecoration(
                 hintText: 'Ürün ara...',
                 prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: Colors.black12),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Expanded(
               child: GridView.builder(
                 itemCount: filteredProducts.length,
@@ -73,19 +134,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                           builder: (_) => DetailScreen(
                             product: product,
-                            onAddToCart: () {
-                              setState(() {
-                                cartCount++;
-                              });
-                            },
+                            onAddToCart: () => addToCart(product),
                           ),
                         ),
-                      );
+                      ).then((_) {
+                        setState(() {});
+                      });
                     },
                     child: Card(
                       elevation: 4,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(18),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -93,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Expanded(
                             child: ClipRRect(
                               borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16),
+                                top: Radius.circular(18),
                               ),
                               child: Image.network(
                                 product.imageUrl,
@@ -108,8 +167,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   product.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 17,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -118,7 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   '${product.price.toStringAsFixed(2)} TL',
                                   style: const TextStyle(
                                     color: Colors.deepPurple,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
                                   ),
                                 ),
                                 const SizedBox(height: 6),
