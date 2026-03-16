@@ -143,7 +143,7 @@ class _CartScreenState extends State<CartScreen> {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Ödeme tamamlandı (demo)'),
+                                  content: Text('Ödeme tamamlandı'),
                                 ),
                               );
                               Navigator.pop(context);

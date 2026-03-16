@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mini Katalog'),
+        title: const Text('E.Can Boz Ticaret'),
         centerTitle: true,
         actions: [
           IconButton(
