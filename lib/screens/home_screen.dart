@@ -27,6 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void checkout() {
+    setState(() {
+      cartItems.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final filteredProducts = products.where((product) {
@@ -46,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (_) => CartScreen(
                     cartItems: cartItems,
                     onRemoveFromCart: removeFromCart,
+                    onCheckout: checkout,
                   ),
                 ),
               ).then((_) {
