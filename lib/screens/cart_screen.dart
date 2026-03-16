@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   final List<Product> cartItems;
   final void Function(Product product) onRemoveFromCart;
+  final VoidCallback onCheckout;
 
   const CartScreen({
     super.key,
     required this.cartItems,
     required this.onRemoveFromCart,
+    required this.onCheckout,
   });
 
   @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
   Widget build(BuildContext context) {
-    final double totalPrice = cartItems.fold(
+    final double totalPrice = widget.cartItems.fold(
       0,
       (sum, item) => sum + item.price,
     );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Sepetim'), centerTitle: true),
-      body: cartItems.isEmpty
+      body: widget.cartItems.isEmpty
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -47,9 +54,9 @@ class CartScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: ListView.builder(
-                    itemCount: cartItems.length,
+                    itemCount: widget.cartItems.length,
                     itemBuilder: (context, index) {
-                      final product = cartItems[index];
+                      final product = widget.cartItems[index];
 
                       return Card(
                         margin: const EdgeInsets.symmetric(
@@ -79,7 +86,8 @@ class CartScreen extends StatelessWidget {
                           ),
                           trailing: IconButton(
                             onPressed: () {
-                              onRemoveFromCart(product);
+                              widget.onRemoveFromCart(product);
+                              setState(() {});
                             },
                             icon: const Icon(
                               Icons.delete_outline,
@@ -103,22 +111,46 @@ class CartScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'Toplam:',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Toplam:',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${totalPrice.toStringAsFixed(2)} TL',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        '${totalPrice.toStringAsFixed(2)} TL',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple,
+                      const SizedBox(height: 14),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            widget.onCheckout();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Ödeme tamamlandı (demo)'),
+                                ),
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                          icon: const Icon(Icons.payment),
+                          label: const Text('Ödemeye Geç'),
                         ),
                       ),
                     ],
