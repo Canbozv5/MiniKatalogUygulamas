@@ -8,7 +8,7 @@ Bu proje, Flutter'ın temel yapı taşlarını ve modern mobil geliştirme prati
 
 ## Ana Ekran / Ürün Detay Sayfası / Sepet Ekranı
 
-![Ana Ekran](screenshots/Anasayfa.png) ![Arama](screenshots/AramaButonu.png) ![Sepet](screenshots/SepetBilgisi.png)
+![Ana Ekran](screenshots/HomeScreenn.png) ![Ürün Bilgisi](screenshots/ProductInfoo.png) ![Sepet](screenshots/CartInfoo.png)
 
 ## Proje İçeriği ve Öğrenim Kazanımları
 
